@@ -3,13 +3,6 @@ import "./App.css"
 import { songs } from "./songs"
 
 
-type Song = {
-  title: string
-  composer: string
-  period: string
-  country: string
-}
-
 
 function App() {
 
@@ -60,7 +53,7 @@ function App() {
   return (
     <div className="quiz">
 
-      <h1>🎼 Music History Trainer</h1>
+      <h1>Music History Trainer</h1>
 
       <h2>{song.title}</h2>
 
