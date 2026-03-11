@@ -18,6 +18,7 @@ button {
   font-size: 16px;
 }
 
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
 :root {

@@ -1,5 +1,7 @@
 import { useState } from "react"
 import "./App.css"
+import { songs } from "./songs"
+
 
 type Song = {
   title: string
@@ -8,119 +10,94 @@ type Song = {
   country: string
 }
 
-const songs: Song[] = [
-  {
-    title: "Brandenburg Concerto No.3",
-    composer: "Bach",
-    period: "Baroque",
-    country: "Germany"
-  },
-  {
-    title: "Moonlight Sonata",
-    composer: "Beethoven",
-    period: "Classical",
-    country: "Germany"
-  },
-  {
-    title: "Symphony No.40",
-    composer: "Mozart",
-    period: "Classical",
-    country: "Austria"
-  },
-  {
-    title: "Nocturne Op.9 No.2",
-    composer: "Chopin",
-    period: "Romantic",
-    country: "Poland"
-  }
-]
 
 function App() {
 
-  const [currentSong, setCurrentSong] = useState(0)
-  const [composer, setComposer] = useState("")
-  const [period, setPeriod] = useState("")
-  const [country, setCountry] = useState("")
+  const [index, setIndex] = useState(0)
+
+  const [composerGuess, setComposerGuess] = useState("")
+  const [periodGuess, setPeriodGuess] = useState("")
+  const [countryGuess, setCountryGuess] = useState("")
+
   const [result, setResult] = useState("")
+
+  const normalize = (text: string) => text.trim().toLowerCase()
 
   const checkAnswer = () => {
 
-    const correct = songs[currentSong]
+    const song = songs[index]
 
-    if (
-      composer === correct.composer &&
-      period === correct.period &&
-      country === correct.country
-    ) {
-      setResult("✅ Correct!")
+    const composerCorrect =
+      normalize(composerGuess) === normalize(song.composer)
+
+    const periodCorrect =
+      normalize(periodGuess) === normalize(song.period)
+
+    const countryCorrect =
+      normalize(countryGuess) === normalize(song.country)
+
+    if (composerCorrect && periodCorrect && countryCorrect) {
+      setResult("All correct!")
     } else {
       setResult(
-        `❌ Wrong! Correct: ${correct.composer}, ${correct.period}, ${correct.country}`
+        ` Correct answers: ${song.composer}, ${song.period}, ${song.country}`
       )
     }
   }
 
   const nextSong = () => {
 
-    setCurrentSong((currentSong + 1) % songs.length)
+    setIndex((index + 1) % songs.length)
 
-    setComposer("")
-    setPeriod("")
-    setCountry("")
+    setComposerGuess("")
+    setPeriodGuess("")
+    setCountryGuess("")
     setResult("")
   }
+
+  const song = songs[index]
 
   return (
     <div className="quiz">
 
-      <h1>🎼 Music History Quiz</h1>
+      <h1>🎼 Music History Trainer</h1>
 
-      <h2>{songs[currentSong].title}</h2>
+      <h2>{song.title}</h2>
 
-      <div className="question">
+      <div className="inputGroup">
 
         <label>Composer</label>
-
-        <select value={composer} onChange={(e) => setComposer(e.target.value)}>
-          <option value="">Select</option>
-          <option>Bach</option>
-          <option>Mozart</option>
-          <option>Beethoven</option>
-          <option>Chopin</option>
-        </select>
+        <input
+          value={composerGuess}
+          onChange={(e) => setComposerGuess(e.target.value)}
+        />
 
       </div>
 
-      <div className="question">
+      <div className="inputGroup">
 
         <label>Period</label>
-
-        <select value={period} onChange={(e) => setPeriod(e.target.value)}>
-          <option value="">Select</option>
-          <option>Baroque</option>
-          <option>Classical</option>
-          <option>Romantic</option>
-        </select>
+        <input
+          value={periodGuess}
+          onChange={(e) => setPeriodGuess(e.target.value)}
+        />
 
       </div>
 
-      <div className="question">
+      <div className="inputGroup">
 
         <label>Country</label>
-
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option value="">Select</option>
-          <option>Germany</option>
-          <option>Austria</option>
-          <option>Poland</option>
-        </select>
+        <input
+          value={countryGuess}
+          onChange={(e) => setCountryGuess(e.target.value)}
+        />
 
       </div>
 
-      <button onClick={checkAnswer}>Submit</button>
-      <button onClick={nextSong}>Next</button>
+      <button onClick={checkAnswer}>Check Answer</button>
+      <button onClick={nextSong}>Next Song</button>
 
-      <h3>{result}</h3>
+      <p className="result">{result}</p>
 
     </div>
   )
