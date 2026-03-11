@@ -17,3 +17,16 @@ button {
   padding: 10px 20px;
   font-size: 16px;
 }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+:root {
+--color-text: white;
+--color-background: black;
+}
+}
+
+body {
+color: var(--color-text);
+background-color: var(--color-background);
+}
