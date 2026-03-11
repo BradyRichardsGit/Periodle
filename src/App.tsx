@@ -2,93 +2,90 @@ import { useState } from "react"
 import "./App.css"
 import { songs } from "./songs"
 
-
+function normalize(text: string) {
+  return text.trim().toLowerCase()
+}
 
 function App() {
 
   const [index, setIndex] = useState(0)
 
-  const [composerGuess, setComposerGuess] = useState("")
-  const [periodGuess, setPeriodGuess] = useState("")
-  const [countryGuess, setCountryGuess] = useState("")
+  const [composer, setComposer] = useState("")
+  const [period, setPeriod] = useState("")
+  const [country, setCountry] = useState("")
 
   const [result, setResult] = useState("")
 
-  const normalize = (text: string) => text.trim().toLowerCase()
+  const song = songs[index]
 
-  const checkAnswer = () => {
+  function checkAnswer() {
 
-    const song = songs[index]
+    const correctComposer = normalize(song.composer)
+    const correctPeriod = normalize(song.period)
+    const correctCountry = normalize(song.country)
 
-    const composerCorrect =
-      normalize(composerGuess) === normalize(song.composer)
+    const userComposer = normalize(composer)
+    const userPeriod = normalize(period)
+    const userCountry = normalize(country)
 
-    const periodCorrect =
-      normalize(periodGuess) === normalize(song.period)
-
-    const countryCorrect =
-      normalize(countryGuess) === normalize(song.country)
-
-    if (composerCorrect && periodCorrect && countryCorrect) {
-      setResult("All correct!")
+    if (
+      userComposer === correctComposer &&
+      userPeriod === correctPeriod &&
+      userCountry === correctCountry
+    ) {
+      setResult("Correct!")
     } else {
       setResult(
-        ` Correct answers: ${song.composer}, ${song.period}, ${song.country}`
+        `Correct: ${song.composer}, ${song.period}, ${song.country}`
       )
     }
   }
 
-  const nextSong = () => {
+  function nextSong() {
 
     setIndex((index + 1) % songs.length)
 
-    setComposerGuess("")
-    setPeriodGuess("")
-    setCountryGuess("")
+    setComposer("")
+    setPeriod("")
+    setCountry("")
     setResult("")
   }
 
-  const song = songs[index]
-
   return (
-    <div className="quiz">
+    <div className="app">
 
-      <h1>Music History Trainer</h1>
+      <h1>Music History Quiz</h1>
 
-      <h2>{song.title}</h2>
+      <audio controls src={song.audio}></audio>
 
-      <div className="inputGroup">
+      <div className="inputs">
 
-        <label>Composer</label>
         <input
-          value={composerGuess}
-          onChange={(e) => setComposerGuess(e.target.value)}
+          placeholder="Composer"
+          value={composer}
+          onChange={(e) => setComposer(e.target.value)}
+        />
+
+        <input
+          placeholder="Period"
+          value={period}
+          onChange={(e) => setPeriod(e.target.value)}
+        />
+
+        <input
+          placeholder="Country"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
         />
 
       </div>
 
-      <div className="inputGroup">
+      <div className="buttons">
 
-        <label>Period</label>
-        <input
-          value={periodGuess}
-          onChange={(e) => setPeriodGuess(e.target.value)}
-        />
+        <button onClick={checkAnswer}>Submit</button>
+        <button onClick={nextSong}>Next Song</button>
 
       </div>
-
-      <div className="inputGroup">
-
-        <label>Country</label>
-        <input
-          value={countryGuess}
-          onChange={(e) => setCountryGuess(e.target.value)}
-        />
-
-      </div>
-
-      <button onClick={checkAnswer}>Check Answer</button>
-      <button onClick={nextSong}>Next Song</button>
 
       <p className="result">{result}</p>
 
