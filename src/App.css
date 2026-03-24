@@ -1,85 +1,86 @@
 :root {
-  --purple-main: #6b46c1;
-  --purple-dark: #44337a;
-  --bg-color: #1a202c;
-  --text-white: #ffffff;
+  --purple: #6b46c1;
+  --bg: #1a202c;
+  --card: #2d3748;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-white);
+  background-color: var(--bg);
+  color: white;
+  font-family: sans-serif;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  padding: 20px;
 }
 
 .app-container {
-  max-width: 500px;
-  width: 90%;
-  background: #2d3748;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background: var(--card);
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 450px;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .audio-card {
-  margin-bottom: 2rem;
-  background: var(--purple-dark);
-  padding: 1rem;
+  margin-bottom: 25px;
+}
+
+.play-toggle {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: var(--purple);
+  color: white;
+  border: none;
   border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.play-toggle.playing { background: #4a5568; }
+
+.btn-stop {
+  background: none;
+  border: 1px solid #4a5568;
+  color: #a0aec0;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .inputs-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1.5rem;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 input {
   padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #4a5568;
   background: #1a202c;
+  border: 1px solid #4a5568;
   color: white;
-  font-size: 1rem;
-}
-
-input:focus {
-  outline: 2px solid var(--purple-main);
+  border-radius: 6px;
 }
 
 .button-group {
   display: flex;
   gap: 10px;
-  justify-content: center;
 }
 
-button {
-  padding: 12px 24px;
-  border-radius: 6px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-button:active { transform: scale(0.98); }
-
-.btn-submit { background-color: var(--purple-main); color: white; }
-.btn-next { background-color: #4a5568; color: white; }
+button.btn-submit { flex: 2; background: var(--purple); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer;}
+button.btn-next { flex: 1; background: #4a5568; color: white; border: none; border-radius: 6px; cursor: pointer;}
 
 .result-box {
-  margin-top: 1.5rem;
-  padding: 1rem;
+  margin-top: 20px;
+  padding: 15px;
   border-radius: 6px;
   font-size: 0.9rem;
-  line-height: 1.4;
 }
 
-.success { background-color: #2f855a; }
-.error { background-color: #9b2c2c; }
+.success { background: #2f855a; }
+.error { background: #9b2c2c; }

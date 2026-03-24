@@ -1,4 +1,4 @@
-(window as any).global = window; // Add this line at the top!
+(window as any).global = window; 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './App.css'

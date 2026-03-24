@@ -5,7 +5,7 @@ import { songs } from "./songs"
 import "./App.css"
 
 function App() {
-  // State for the Quiz
+  // Quiz State
   const [index, setIndex] = useState(0)
   const [composer, setComposer] = useState("")
   const [period, setPeriod] = useState("")
@@ -14,9 +14,10 @@ function App() {
   const [language, setLanguage] = useState("")
   const [result, setResult] = useState("")
   
-  // State for Audio
+  // Audio Engine State
   const [isPlaying, setIsPlaying] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const playerRef = useRef<any>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -24,7 +25,7 @@ function App() {
 
   const song = songs[index]
 
-  // Initialize MIDI Engine
+  // Initialize MIDI Player
   useEffect(() => {
     playerRef.current = new MidiPlayer.Player((event: any) => {
       if (event.name === 'Note on' && instrumentRef.current) {
@@ -32,37 +33,49 @@ function App() {
           gain: event.velocity / 100 
         })
       }
+      // Auto-reset UI when song ends
+      if (event.name === 'End of Track') {
+        setIsPlaying(false)
+      }
     })
     loadMidi(song.audio)
     return () => stopMidi()
   }, [index])
 
-  const initAudio = async () => {
-    if (!audioContextRef.current) {
-      const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext
-      audioContextRef.current = new AudioContextClass()
-      const choir = await Soundfont.instrument(audioContextRef.current!, 'choir_aahs')
-      instrumentRef.current = choir
-      setIsReady(true)
-    }
-  }
-
   const loadMidi = (url: string) => {
     fetch(url)
       .then(res => res.arrayBuffer())
       .then(arrayBuffer => playerRef.current.loadArrayBuffer(arrayBuffer))
+      .catch(err => console.error("Error loading MIDI file:", err))
   }
 
-  const togglePlay = async () => {
-    if (!isReady) await initAudio()
-    if (audioContextRef.current?.state === 'suspended') await audioContextRef.current.resume()
-    
+  const handlePlayPause = async () => {
+    // Load soundfonts on first click
+    if (!isReady) {
+      setIsLoading(true)
+      const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext
+      audioContextRef.current = new AudioContextClass()
+      try {
+        const choir = await Soundfont.instrument(audioContextRef.current!, 'choir_aahs')
+        instrumentRef.current = choir
+        setIsReady(true)
+      } catch (err) {
+        console.error("Soundfont failed:", err)
+      }
+      setIsLoading(false)
+    }
+
+    if (audioContextRef.current?.state === 'suspended') {
+      await audioContextRef.current.resume()
+    }
+
     if (isPlaying) {
       playerRef.current.pause()
+      setIsPlaying(false)
     } else {
       playerRef.current.play()
+      setIsPlaying(true)
     }
-    setIsPlaying(!isPlaying)
   }
 
   const stopMidi = () => {
@@ -81,27 +94,32 @@ function App() {
       normalize(language) === normalize(song.language)
 
     if (isCorrect) {
-      setResult("Correct! Well done.")
+      setResult("Correct! ✨")
     } else {
-      setResult(`Incorrect. Correct: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}`)
+      setResult(`Incorrect. It was: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}`)
     }
   }
 
   function nextSong() {
     stopMidi()
-    setIndex((prev) => (prev + 1) % songs.length)
+    const nextIndex = Math.floor(Math.random() * songs.length)
+    setIndex(nextIndex)
     setComposer(""); setPeriod(""); setYear(""); setCountry(""); setLanguage(""); setResult("")
   }
 
   return (
     <div className="app-container">
-      <h1>Choral History Quiz</h1>
+      <h1>Choral Music History Quiz</h1>
 
       <div className="audio-card">
-        <button className="btn-play" onClick={togglePlay}>
-          {!isReady ? "Load Instruments" : isPlaying ? "Pause ⏸" : "Play MIDI ▶"}
+        <button 
+          className={`play-toggle ${isPlaying ? 'playing' : ''}`} 
+          onClick={handlePlayPause}
+          disabled={isLoading}
+        >
+          {isLoading ? "Loading Voices..." : isPlaying ? "Pause ⏸" : "Play Song ▶"}
         </button>
-        <button className="btn-stop" onClick={stopMidi}>Stop ⏹</button>
+        <button className="btn-stop" onClick={stopMidi}>Reset Track</button>
       </div>
 
       <div className="inputs-grid">
@@ -113,11 +131,15 @@ function App() {
       </div>
 
       <div className="button-group">
-        <button className="btn-submit" onClick={checkAnswer}>Submit</button>
-        <button className="btn-next" onClick={nextSong}>Next Song</button>
+        <button className="btn-submit" onClick={checkAnswer}>Submit Answer</button>
+        <button className="btn-next" onClick={nextSong}>Random Song ↻</button>
       </div>
 
-      {result && <div className="result-box">{result}</div>}
+      {result && (
+        <div className={`result-box ${result.includes('Correct') ? 'success' : 'error'}`}>
+          {result}
+        </div>
+      )}
     </div>
   )
 }
