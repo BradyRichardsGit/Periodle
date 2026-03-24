@@ -1,38 +1,28 @@
-export type Song = {
-  title: string
-  composer: string
-  period: string
-  country: string
-  audio: string
+export interface Song {
+  audio: string;
+  composer: string;
+  period: string;
+  year: string;
+  country: string;
+  language: string;
 }
 
 export const songs: Song[] = [
   {
-    title: "Brandenburg Concerto No.3",
-    composer: "Bach",
-    period: "Baroque",
-    country: "Germany",
-    audio: "/audio/brandenburg3.mp3"
-  },
-  {
-    title: "Moonlight Sonata",
-    composer: "Beethoven",
+    audio: "/audio/mozart-requiem.mp3", // Place files in your 'public' folder
+    composer: "Wolfgang Amadeus Mozart",
     period: "Classical",
-    country: "Germany",
-    audio: "/audio/moonlight.mp3"
-  },
-  {
-    title: "Symphony No.40",
-    composer: "Mozart",
-    period: "Classical",
+    year: "1791",
     country: "Austria",
-    audio: "/audio/symphony40.mp3"
+    language: "Latin"
   },
   {
-    title: "Nocturne Op.9 No.2",
-    composer: "Chopin",
-    period: "Romantic",
-    country: "Poland",
-    audio: "/audio/nocturne9.mp3"
+    audio: "/audio/palestrina-sicut.mp3",
+    composer: "Giovanni Pierluigi da Palestrina",
+    period: "Renaissance",
+    year: "1584",
+    country: "Italy",
+    language: "Latin"
   }
-]
+  // Add more here...
+];
