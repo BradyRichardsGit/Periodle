@@ -13,6 +13,7 @@ function App() {
   const [year, setYear] = useState("")
   const [country, setCountry] = useState("")
   const [language, setLanguage] = useState("")
+  const [genre, setGenre] = useState("")
   const [result, setResult] = useState("")
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
 
@@ -32,7 +33,8 @@ function App() {
       { user: period, correct: song.period },
       { user: year, correct: song.year },
       { user: country, correct: song.country },
-      { user: language, correct: song.language }
+      { user: language, correct: song.language },
+      { user: genre, correct: song.genre }
     ]
 
     const allCorrect = fields.every(f => normalize(f.user) === normalize(f.correct))
@@ -41,7 +43,7 @@ function App() {
       setResult("Excellent! You got them all right.")
       setIsCorrect(true)
     } else {
-      setResult(`Not quite. Correct answer: ${song.composer} (${song.year}), ${song.period}, ${song.country}, ${song.language}`)
+      setResult(`Not quite. Correct answer: ${song.composer} (${song.year}), ${song.period}, ${song.country}, ${song.language}, ${song.genre}`)
       setIsCorrect(false)
     }
   }
@@ -59,6 +61,7 @@ function App() {
     setYear("")
     setCountry("")
     setLanguage("")
+    setGenre("")
     setResult("")
     setIsCorrect(null)
   }
@@ -80,6 +83,7 @@ function App() {
         <input placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} />
         <input placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
         <input placeholder="Language" value={language} onChange={(e) => setLanguage(e.target.value)} />
+        <input placeholder="Genre" value={genre} onChange={(e) => setGenre(e.target.value)} />
       </div>
 
       <div className="button-group">

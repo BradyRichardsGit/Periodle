@@ -5,6 +5,7 @@ export interface Song {
   year: string;
   country: string;
   language: string;
+  genre: string;
 }
 
 export const songs: Song[] = [
@@ -14,7 +15,8 @@ export const songs: Song[] = [
     period: "Classical",
     year: "1791",
     country: "Austria",
-    language: "Latin"
+    language: "Latin",
+    genre: "Sacred"
   },
   {
     audio: "/audio/palestrina-sicut.mp3",
@@ -22,7 +24,8 @@ export const songs: Song[] = [
     period: "Renaissance",
     year: "1584",
     country: "Italy",
-    language: "Latin"
+    language: "Latin",
+    genre: "Sacred"
   }
   // Add more here...
 ];
