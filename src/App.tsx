@@ -12,6 +12,7 @@ function App() {
   const [year, setYear] = useState("")
   const [country, setCountry] = useState("")
   const [language, setLanguage] = useState("")
+  const [genre, setGenre] = useState("")
   const [result, setResult] = useState("")
   
   // Audio Engine State
@@ -91,12 +92,13 @@ function App() {
       normalize(period) === normalize(song.period) &&
       normalize(year) === normalize(song.year) &&
       normalize(country) === normalize(song.country) &&
-      normalize(language) === normalize(song.language)
+      normalize(language) === normalize(song.language) &&
+      normalize(genre) === normalize(song.genre)
 
     if (isCorrect) {
       setResult("Correct! ✨")
     } else {
-      setResult(`Incorrect. It was: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}`)
+      setResult(`Incorrect. It was: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}, ${song.genre}.`)
     }
   }
 
@@ -104,7 +106,7 @@ function App() {
     stopMidi()
     const nextIndex = Math.floor(Math.random() * songs.length)
     setIndex(nextIndex)
-    setComposer(""); setPeriod(""); setYear(""); setCountry(""); setLanguage(""); setResult("")
+    setComposer(""); setPeriod(""); setYear(""); setCountry(""); setLanguage(""); setGenre(""); setResult("")
   }
 
   return (
@@ -128,6 +130,7 @@ function App() {
         <input placeholder="Year" value={year} onChange={e => setYear(e.target.value)} />
         <input placeholder="Country" value={country} onChange={e => setCountry(e.target.value)} />
         <input placeholder="Language" value={language} onChange={e => setLanguage(e.target.value)} />
+        <input placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
       </div>
 
       <div className="button-group">
