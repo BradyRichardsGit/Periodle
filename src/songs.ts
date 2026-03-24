@@ -10,7 +10,7 @@ export interface Song {
 
 export const songs: Song[] = [
   {
-    audio: "/audio/mozart-requiem.mp3", // Place files in your 'public' folder
+    audio: "/audio/Ws-moz-lacr.mid", 
     composer: "Wolfgang Amadeus Mozart",
     period: "Classical",
     year: "1791",

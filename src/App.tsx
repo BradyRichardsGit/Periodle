@@ -1,101 +1,81 @@
 import { useState, useEffect, useRef } from "react"
-import "./App.css"
+import MidiPlayer from "midi-player-js"
+import Soundfont from "soundfont-player"
 import { songs } from "./songs"
-
-function normalize(text: string) {
-  return text.trim().toLowerCase()
-}
+import "./App.css"
 
 function App() {
   const [index, setIndex] = useState(0)
-  const [composer, setComposer] = useState("")
-  const [period, setPeriod] = useState("")
-  const [year, setYear] = useState("")
-  const [country, setCountry] = useState("")
-  const [language, setLanguage] = useState("")
-  const [genre, setGenre] = useState("")
   const [result, setResult] = useState("")
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  
+  // Refs to hold the player and the audio context
+  const playerRef = useRef<any>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const instrumentRef = useRef<any>(null)
 
-  const audioRef = useRef<HTMLAudioElement>(null)
   const song = songs[index]
 
-  // Reload audio whenever the song changes
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load()
-    }
+    // Initialize Audio Context on first interaction
+    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+
+    // Load the Soundfont (Acoustic Grand Piano is standard, 'choir_aahs' is better for you)
+    Soundfont.instrument(audioContextRef.current, 'choir_aahs').then((choir) => {
+      instrumentRef.current = choir
+      
+      // Initialize MIDI Player
+      playerRef.current = new MidiPlayer.Player((event: any) => {
+        if (event.name === 'Note on') {
+          instrumentRef.current.play(event.noteName, audioContextRef.current!.currentTime, { gain: event.velocity / 100 })
+        }
+      })
+      
+      loadMidi(song.audio)
+    })
+
+    return () => stopMidi()
   }, [index])
 
-  function checkAnswer() {
-    const fields = [
-      { user: composer, correct: song.composer },
-      { user: period, correct: song.period },
-      { user: year, correct: song.year },
-      { user: country, correct: song.country },
-      { user: language, correct: song.language },
-      { user: genre, correct: song.genre }
-    ]
+  const loadMidi = (url: string) => {
+    fetch(url)
+      .then(res => res.arrayBuffer())
+      .then(arrayBuffer => {
+        playerRef.current.loadArrayBuffer(arrayBuffer)
+      })
+  }
 
-    const allCorrect = fields.every(f => normalize(f.user) === normalize(f.correct))
-
-    if (allCorrect) {
-      setResult("Excellent! You got them all right.")
-      setIsCorrect(true)
+  const togglePlay = () => {
+    if (isPlaying) {
+      playerRef.current.pause()
     } else {
-      setResult(`Not quite. Correct answer: ${song.composer} (${song.year}), ${song.period}, ${song.country}, ${song.language}, ${song.genre}`)
-      setIsCorrect(false)
+      if (audioContextRef.current?.state === 'suspended') {
+        audioContextRef.current.resume()
+      }
+      playerRef.current.play()
     }
+    setIsPlaying(!isPlaying)
   }
 
-  function nextSong() {
-    // Logic for a random song that isn't the current one
-    let nextIndex;
-    do {
-      nextIndex = Math.floor(Math.random() * songs.length);
-    } while (nextIndex === index && songs.length > 1);
-
-    setIndex(nextIndex)
-    setComposer("")
-    setPeriod("")
-    setYear("")
-    setCountry("")
-    setLanguage("")
-    setGenre("")
-    setResult("")
-    setIsCorrect(null)
+  const stopMidi = () => {
+    playerRef.current?.stop()
+    setIsPlaying(false)
   }
+
+  // ... (keep your existing checkAnswer and nextSong functions)
 
   return (
     <div className="app-container">
-      <h1>Choral History Quiz</h1>
+      <h1>Choral MIDI Quiz</h1>
 
       <div className="audio-card">
-        <audio ref={audioRef} controls>
-          <source src={song.audio} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+        <button className="play-btn" onClick={togglePlay}>
+          {isPlaying ? "Pause ⏸" : "Play MIDI ▶"}
+        </button>
+        <button onClick={stopMidi}>Stop ⏹</button>
       </div>
 
-      <div className="inputs-grid">
-        <input placeholder="Composer" value={composer} onChange={(e) => setComposer(e.target.value)} />
-        <input placeholder="Period (e.g. Baroque)" value={period} onChange={(e) => setPeriod(e.target.value)} />
-        <input placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} />
-        <input placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
-        <input placeholder="Language" value={language} onChange={(e) => setLanguage(e.target.value)} />
-        <input placeholder="Genre" value={genre} onChange={(e) => setGenre(e.target.value)} />
-      </div>
-
-      <div className="button-group">
-        <button className="btn-submit" onClick={checkAnswer}>Submit Answer</button>
-        <button className="btn-next" onClick={nextSong}>New Song ↻</button>
-      </div>
-
-      {result && (
-        <div className={`result-box ${isCorrect ? 'success' : 'error'}`}>
-          {result}
-        </div>
-      )}
+      {/* ... keep your inputs and result display here ... */}
     </div>
   )
 }
