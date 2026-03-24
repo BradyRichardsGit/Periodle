@@ -96,9 +96,9 @@ function App() {
       normalize(genre) === normalize(song.genre)
 
     if (isCorrect) {
-      setResult("Correct! ✨")
+      setResult("Correct!")
     } else {
-      setResult(`Incorrect. It was: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}, ${song.genre}.`)
+      setResult(`Not completely correct. It was: ${song.composer}, ${song.period}, ${song.year}, ${song.country}, ${song.language}, ${song.genre}.`)
     }
   }
 
@@ -111,7 +111,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Choral Music History Quiz</h1>
+      <h1>Choral Litera-le</h1>
 
       <div className="audio-card">
         <button 
