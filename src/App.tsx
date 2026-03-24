@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import "./App.css"
-import { songs, Song } from "./songs"
+import { songs, type Song } from "./songs"
 
 function normalize(text: string) {
   return text.trim().toLowerCase()
